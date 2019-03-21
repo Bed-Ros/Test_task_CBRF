@@ -1,5 +1,4 @@
 from selenium import webdriver
-import time
 import smtplib
 import imghdr
 from email.message import EmailMessage
@@ -27,5 +26,4 @@ def before_all(context):
 
 def after_all(context):
     send_screenshots(context.screenshots)
-    #time.sleep(10)
     context.browser.quit()

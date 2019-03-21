@@ -7,35 +7,38 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.common.action_chains import ActionChains
 
 
-@Given('Сайт "{url}"')
+@Given('Зашли на сайт "{url}"')
 def step(context, url):
     context.browser.get("http://" + url)
 
 
 @Then('Проверили, что появилось поле "{title}"')
 def step(context, title):
-    wait(context.browser, 120).until(
-        ec.presence_of_element_located((By.XPATH, f'//input[@title="{title}"]')))
-    context.google_search_el = context.browser.find_element_by_xpath(f'//input[@title="{title}"]')
+    locator = (By.XPATH, f'//input[@title="{title}"]')
+    wait(context.browser, 10).until(
+        ec.presence_of_element_located(locator))
+    context.google_search_el = context.browser.find_element(*locator)
 
 
-@When('Ввели в поле поиск значение "{text}"')
+@When('Ввели в поле Поиск значение "{text}"')
 def step(context, text):
     context.google_search_el.send_keys(text)
 
 
-@When('Нажали на кнопку "{value}"')
-def step(context, value):
+@When('Нажали на кнопку "Поиск в Google"')
+def step(context):
+    locator = (By.XPATH, '//*[@id="tsf"]/div[2]/div/div[2]/div[2]/div/center/input[1]')
     wait(context.browser, 1).until(
-        ec.element_to_be_clickable((By.XPATH, '//*[@id="tsf"]/div[2]/div/div[2]/div[2]/div/center/input[1]')))
-    context.browser.find_element_by_xpath('//*[@id="tsf"]/div[2]/div/div[2]/div[2]/div/center/input[1]').click()
+        ec.element_to_be_clickable(locator))
+    context.browser.find_element(*locator).click()
 
 
 @Then('Нашли ссылку "{url}"')
 def step(context, url):
-    wait(context.browser, 120).until(
-        ec.presence_of_element_located((By.PARTIAL_LINK_TEXT, url)))
-    context.cbr_url_el = context.browser.find_element_by_partial_link_text(url)
+    locator = (By.PARTIAL_LINK_TEXT, url)
+    wait(context.browser, 10).until(
+        ec.presence_of_element_located(locator))
+    context.cbr_url_el = context.browser.find_element(*locator)
 
 
 @When('Нажали на ссылку "cbr.ru"')
@@ -94,12 +97,10 @@ def step(context):
 
 @When('Нажали на раздел О сайте')
 def step(context):
-    locator = (By.CSS_SELECTOR, '#page > div.whole_site > div > div.whole_site_map_container > '
-                                'div.first_level_switcher > ul > li.for_branch_11377 > a')
+    locator = (By.XPATH, '//*[@id="page"]/div[5]/div/div[4]/div[1]/ul/li[20]/a')
     wait(context.browser, 10).until(ec.visibility_of_element_located(locator))
     el = context.browser.find_element(*locator)
-    action = ActionChains(context.browser)
-    action.move_to_element(el).perform()
+    ActionChains(context.browser).move_to_element(el).perform()
     el.click()
 
 
@@ -111,7 +112,7 @@ def step(context):
 
 @When('Сменили язык страницы на en')
 def step(context):
-    locator = (By.CSS_SELECTOR, '#layout > div.header > div.header__extra > div > ul > li:nth-child(2) > a')
+    locator = (By.XPATH, '//*[@id="layout"]/div[1]/div[2]/div/ul/li[2]/a')
     wait(context.browser, 10).until(ec.element_to_be_clickable(locator))
     context.browser.find_element(*locator).click()
 
