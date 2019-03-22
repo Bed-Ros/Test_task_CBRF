@@ -27,7 +27,7 @@ def step(context, text):
 
 @When('Нажали на кнопку "Поиск в Google"')
 def step(context):
-    locator = (By.XPATH, '//*[@id="tsf"]/div[2]/div/div[2]/div[2]/div/center/input[1]')
+    locator = (By.XPATH, '//*[@class="VlcLAe"]//input[@value="Поиск в Google"]')
     wait(context.browser, 1).until(
         ec.element_to_be_clickable(locator))
     context.browser.find_element(*locator).click()
@@ -79,7 +79,7 @@ def step(context, text):
 
 @When('Поставили галочку "Я согласен"')
 def step(context):
-    locator = (By.XPATH, '//*[@id="_agreementFlag"]')
+    locator = (By.ID, '_agreementFlag')
     wait(context.browser, 10).until(
         ec.element_to_be_clickable(locator))
     context.browser.find_element(*locator).click()
@@ -97,7 +97,7 @@ def step(context):
 
 @When('Нажали на раздел О сайте')
 def step(context):
-    locator = (By.XPATH, '//*[@id="page"]/div[5]/div/div[4]/div[1]/ul/li[20]/a')
+    locator = (By.XPATH, '//*[@class="for_branch_11377"]/a')
     wait(context.browser, 10).until(ec.visibility_of_element_located(locator))
     el = context.browser.find_element(*locator)
     ActionChains(context.browser).move_to_element(el).perform()
@@ -112,7 +112,7 @@ def step(context):
 
 @When('Сменили язык страницы на en')
 def step(context):
-    locator = (By.XPATH, '//*[@id="layout"]/div[1]/div[2]/div/ul/li[2]/a')
+    locator = (By.XPATH, '//a[text()="EN"]')
     wait(context.browser, 10).until(ec.element_to_be_clickable(locator))
     context.browser.find_element(*locator).click()
 
