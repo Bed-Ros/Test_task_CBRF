@@ -11,16 +11,25 @@ class BasePage(object):
     def __init__(self, browser, base_url='http://www.seleniumframework.com'):
         self.base_url = base_url
         self.browser = browser
-        self.timeout = 30
+        self.timeout = 10
+
+    def go_to_last_page(self):
+        self.browser.switch_to.window(self.browser.window_handles[-1])
 
     def find_element(self, *loc):
         return self.browser.find_element(*loc)
 
-    def visit(self, url):
-        self.browser.get(url)
+    def visit(self):
+        self.browser.get(self.base_url)
 
     def screenshot(self, context):
         context.screenshots.append(self.browser.get_screenshot_as_png())
+
+    def assert_page(self, url):
+        current_ps = self.browser.page_source
+        self.browser.get("http://" + url)
+        expected_ps = self.browser.page_source
+        assert (current_ps != expected_ps)
 
     def hover(self, element):
             ActionChains(self.browser).move_to_element(element).perform()

@@ -7,5 +7,5 @@ class GoogleSearchPage(GoogleMainPage):
     locator_dictionary = {
         **GoogleMainPage.locator_dictionary,
         "search_button": (By.CLASS_NAME, 'z1asCe MZy1Rb'),
-        "link_cbr_ru": (By.LINK_TEXT, 'cbr.ru')
+        "link_cbr_ru": (By.PARTIAL_LINK_TEXT, 'cbr.ru')
     }

@@ -4,7 +4,7 @@ from .base_page_object import BasePage
 
 class GoogleMainPage(BasePage):
 
-    def __init__(self, context, base_url='https://www.google.com/'):
+    def __init__(self, context, base_url='https://www.google.ru/'):
         BasePage.__init__(
             self,
             context.browser,

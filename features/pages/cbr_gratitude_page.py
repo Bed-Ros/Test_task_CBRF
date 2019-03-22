@@ -7,7 +7,7 @@ class CbrGratitudePage(CbrMainPage):
     def __init__(self, context):
         CbrMainPage.__init__(
             self,
-            context.browser,
+            context,
             base_url='https://www.cbr.ru/Reception/Message/Register?messageType=Gratitude')
 
     locator_dictionary = {

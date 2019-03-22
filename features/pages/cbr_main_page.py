@@ -12,6 +12,7 @@ class CbrMainPage(BasePage):
 
     locator_dictionary = {
         "reception_button": (By.XPATH, '//a[text()="Интернет-приемная"]'),
+        "warning_link": (By.XPATH, '//a[text()="Предупреждение"]'),
         "burger_button": (By.XPATH, '//div[@id="layout"]//span[@class="burger"]'),
         "about": (By.XPATH, '//*[@class="for_branch_11377"]/a'),
         "en": (By.XPATH, '//a[text()="EN"]')
