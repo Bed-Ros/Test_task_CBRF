@@ -1,124 +1,103 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from behave import *
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait as wait
-from selenium.webdriver.support import expected_conditions as ec
-from selenium.webdriver.common.action_chains import ActionChains
+from features.pages import *
+
+use_step_matcher("re")
 
 
-@Given('Зашли на сайт "{url}"')
-def step(context, url):
-    context.browser.get("http://" + url)
+@Given('Зашли на сайт "google.ru"')
+def step(context):
+    context.page = GoogleMainPage(context)
+    context.page.visit()
 
 
-@Then('Проверили, что появилось поле "{title}"')
-def step(context, title):
-    locator = (By.XPATH, f'//input[@title="{title}"]')
-    wait(context.browser, 10).until(
-        ec.presence_of_element_located(locator))
-    context.google_search_el = context.browser.find_element(*locator)
+@Then('Проверили, что появилось поле "Поиск"')
+def step(context):
+    assert context.page.search_input
 
 
-@When('Ввели в поле Поиск значение "{text}"')
+@When('Ввели в поле Поиск значение "([^"]*)"')
 def step(context, text):
-    context.google_search_el.send_keys(text)
+    context.page.search_input.send_keys(text)
 
 
 @When('Нажали на кнопку "Поиск в Google"')
 def step(context):
-    locator = (By.XPATH, '//*[@class="VlcLAe"]//input[@value="Поиск в Google"]')
-    wait(context.browser, 1).until(
-        ec.element_to_be_clickable(locator))
-    context.browser.find_element(*locator).click()
+    context.page.search_button.click()
+    context.page = GoogleSearchPage(context)
 
 
-@Then('Нашли ссылку "{url}"')
-def step(context, url):
-    locator = (By.PARTIAL_LINK_TEXT, url)
-    wait(context.browser, 10).until(
-        ec.presence_of_element_located(locator))
-    context.cbr_url_el = context.browser.find_element(*locator)
+@Then('Нашли ссылку "cbr.ru"')
+def step(context):
+    assert context.page.link_cbr_ru
 
 
 @When('Нажали на ссылку "cbr.ru"')
 def step(context):
-    context.cbr_url_el.click()
-    context.browser.switch_to.window(context.browser.window_handles[-1])
+    context.page.link_cbr_ru.click()
+    context.page.go_to_last_page()
+    context.page = CbrMainPage(context)
 
 
-@Then('Проверили, что открыт сайт {url}')
+@Then('Проверили, что открыт сайт ([^"]*)')
 def step(context, url):
-    current_url = context.browser.current_url
-    current_ps = context.browser.page_source
-    context.browser.get("http://" + url)
-    expected_ps = context.browser.page_source
-    if current_ps != expected_ps:
-        raise Exception(f"Неверный сайт, ожидалось:{url}, получено:{current_url}")
+    context.page.assert_page(url)
 
 
-@When('Нажали на ссылку {text}')
+@When('Нажали на ссылку Интернет-приемная')
+def step(context):
+    context.page.reception_button.click()
+    context.page = CbrReceptionPage(context)
+
+
+@When('Открыли раздел Написать благодарность')
+def step(context):
+    context.page.gratitude_button.click()
+    context.page = CbrGratitudePage(context)
+
+
+@When('В поле Ваша благодарность ввели значение "([^"]*)"')
 def step(context, text):
-    locator = (By.XPATH, f'//a[text()="{text}"]')
-    wait(context.browser, 10).until(ec.element_to_be_clickable(locator))
-    context.browser.find_element(*locator).click()
-
-
-@When('Открыли раздел {text}')
-def step(context, text):
-    context.browser.find_element_by_xpath(f'//h2[text()="{text}"]').click()
-
-
-@When('В поле Ваша благодарность ввели значение "{text}"')
-def step(context, text):
-    locator = (By.ID, 'MessageBody')
-    wait(context.browser, 10).until(
-        ec.presence_of_element_located(locator))
-    context.browser.find_element(*locator).send_keys(text)
+    context.page.message_input.send_keys(text)
 
 
 @When('Поставили галочку "Я согласен"')
 def step(context):
-    locator = (By.ID, '_agreementFlag')
-    wait(context.browser, 10).until(
-        ec.element_to_be_clickable(locator))
-    context.browser.find_element(*locator).click()
+    context.page.agreement_flag.click()
 
 
 @Then('Сделали скриншот')
 def step(context):
-    context.screenshots.append(context.browser.get_screenshot_as_png())
+    context.page.screenshot(context)
 
 
 @When('Нажали на Три полоски')
 def step(context):
-    context.browser.find_element_by_xpath('//div[@id="layout"]//span[@class="burger"]').click()
+    context.page.burger_button.click()
 
 
 @When('Нажали на раздел О сайте')
 def step(context):
-    locator = (By.XPATH, '//*[@class="for_branch_11377"]/a')
-    wait(context.browser, 10).until(ec.visibility_of_element_located(locator))
-    el = context.browser.find_element(*locator)
-    ActionChains(context.browser).move_to_element(el).perform()
-    el.click()
+    context.page.about.click()
+
+
+@When('Нажали на ссылку Предупреждение')
+def step(context):
+    context.page.warning_link.click()
+    context.page = CbrWarningPage(context)
 
 
 @Then('Запомнили текст предупреждения')
 def step(context):
-    el = context.browser.find_element_by_xpath('//*[@id="content"]/p')
-    context.warning_text = el.text
+    context.warning_text = context.page.warning.text
 
 
 @When('Сменили язык страницы на en')
 def step(context):
-    locator = (By.XPATH, '//a[text()="EN"]')
-    wait(context.browser, 10).until(ec.element_to_be_clickable(locator))
-    context.browser.find_element(*locator).click()
+    context.page.en.click()
 
 
 @Then('Проверили, что текст отличается от запомненного текста ранее')
 def step(context):
-    current_warning_text = context.browser.find_element_by_xpath('//*[@id="content"]/p')
-    if current_warning_text == context.warning_text:
-        raise Exception('Текст предупреждения не отличается от запомненного текста ранее!')
+    assert context.warning_text != context.page.warning.text
