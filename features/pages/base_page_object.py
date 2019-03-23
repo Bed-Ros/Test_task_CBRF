@@ -3,14 +3,13 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.common.exceptions import *
 import traceback
-import time
 
 
 class BasePage(object):
 
-    def __init__(self, browser, base_url='http://www.seleniumframework.com'):
+    def __init__(self, context, base_url='http://www.seleniumframework.com'):
         self.base_url = base_url
-        self.browser = browser
+        self.browser = context.browser
         self.timeout = 10
 
     def go_to_last_page(self):
@@ -33,27 +32,24 @@ class BasePage(object):
 
     def hover(self, element):
             ActionChains(self.browser).move_to_element(element).perform()
-            # I don't like this but hover is sensitive and needs some sleep time
-            time.sleep(5)
 
     def __getattr__(self, what):
         try:
             if what in self.locator_dictionary.keys():
+                element = None
                 try:
                     element = WebDriverWait(self.browser, self.timeout).until(
                         ec.presence_of_element_located(self.locator_dictionary[what])
                     )
                 except(TimeoutException, StaleElementReferenceException):
                     traceback.print_exc()
-
                 try:
                     element = WebDriverWait(self.browser, self.timeout).until(
                         ec.visibility_of_element_located(self.locator_dictionary[what])
                     )
                 except(TimeoutException, StaleElementReferenceException):
                     traceback.print_exc()
-                # I could have returned element, however because of lazy loading, I am seeking the element before return
-                return self.find_element(*self.locator_dictionary[what])
+                return element
         except AttributeError:
             super(BasePage, self).__getattribute__("method_missing")(what)
 

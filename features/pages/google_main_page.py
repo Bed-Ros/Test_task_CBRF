@@ -7,7 +7,7 @@ class GoogleMainPage(BasePage):
     def __init__(self, context, base_url='https://www.google.ru/'):
         BasePage.__init__(
             self,
-            context.browser,
+            context,
             base_url=base_url)
 
     locator_dictionary = {

@@ -3,8 +3,6 @@
 from behave import *
 from features.pages import *
 
-use_step_matcher("re")
-
 
 @Given('Зашли на сайт "google.ru"')
 def step(context):
@@ -17,7 +15,7 @@ def step(context):
     assert context.page.search_input
 
 
-@When('Ввели в поле Поиск значение "([^"]*)"')
+@When('Ввели в поле Поиск значение "{text}"')
 def step(context, text):
     context.page.search_input.send_keys(text)
 
@@ -40,7 +38,7 @@ def step(context):
     context.page = CbrMainPage(context)
 
 
-@Then('Проверили, что открыт сайт ([^"]*)')
+@Then('Проверили, что открыт сайт {url}')
 def step(context, url):
     context.page.assert_page(url)
 
@@ -57,7 +55,7 @@ def step(context):
     context.page = CbrGratitudePage(context)
 
 
-@When('В поле Ваша благодарность ввели значение "([^"]*)"')
+@When('В поле Ваша благодарность ввели значение "{text}"')
 def step(context, text):
     context.page.message_input.send_keys(text)
 

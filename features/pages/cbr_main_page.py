@@ -7,7 +7,7 @@ class CbrMainPage(BasePage):
     def __init__(self, context, base_url='https://www.cbr.ru/'):
         BasePage.__init__(
             self,
-            context.browser,
+            context,
             base_url=base_url)
 
     locator_dictionary = {
